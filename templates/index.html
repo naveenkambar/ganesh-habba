@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ganesh Chaturthi — Street Committee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<style>
+  :root{
+    --bg:#FBF2DE;
+    --card:#FFFBF2;
+    --ink:#2A1810;
+    --ink-soft:#6B5648;
+    --maroon:#7A1F2B;
+    --maroon-dark:#5C1620;
+    --marigold:#E8A33D;
+    --marigold-light:#F4C878;
+    --leaf:#3C6E47;
+    --leaf-light:#E4EFE3;
+    --rust:#C1442E;
+    --rust-light:#FBE6E1;
+    --brass:#B5722B;
+    --line:#E7D8B8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 8% 8%, rgba(232,163,61,0.10), transparent 40%),
+      radial-gradient(circle at 92% 15%, rgba(122,31,43,0.07), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2', sans-serif;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px;}
+
+  /* ---------- Garland divider (signature element) ---------- */
+  .garland{
+    display:flex; justify-content:center; align-items:flex-end;
+    height:30px; margin:6px 0 34px; gap:0;
+  }
+  .garland svg{display:block;}
+
+  /* ---------- Header ---------- */
+  header{
+    background:linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+    color:#FCEBC9;
+    padding:18px 0 46px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0; height:14px;
+    background:repeating-linear-gradient(90deg, var(--marigold) 0 18px, var(--maroon-dark) 18px 20px);
+    opacity:0.9;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:radial-gradient(rgba(232,163,61,0.35) 1.5px, transparent 1.5px);
+    background-size:26px 26px;
+    opacity:0.25;
+    animation:twinkle 5s ease-in-out infinite alternate;
+    pointer-events:none;
+    z-index:0;
+  }
+  @keyframes twinkle{ from{opacity:0.15;} to{opacity:0.35;} }
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes glowPulse{ 0%,100%{text-shadow:0 0 10px rgba(232,163,61,0.35);} 50%{text-shadow:0 0 22px rgba(232,163,61,0.75);} }
+  @keyframes floatY{ 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-14px) rotate(6deg);} }
+  .petal{
+    position:absolute; font-size:20px; opacity:0.55; pointer-events:none;
+    animation:floatY 6s ease-in-out infinite;
+  }
+  .hero .om{animation:glowPulse 2.6s ease-in-out infinite;}
+  .hero .om, .hero h1, .hero p.sub, .hero .dates{
+    opacity:0; animation:fadeInUp 0.8s ease forwards;
+  }
+  .hero .om{animation:fadeInUp 0.7s ease forwards, glowPulse 2.6s ease-in-out 0.7s infinite;}
+  .hero h1{animation-delay:0.12s;}
+  .hero p.sub{animation-delay:0.26s;}
+  .hero .dates{animation-delay:0.4s;}
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  .stat-card, .schedule-row, .upi-card, .ledger{transition:transform 0.25s ease, box-shadow 0.25s ease;}
+  .stat-card:hover{transform:translateY(-4px); box-shadow:0 12px 26px rgba(122,31,43,0.14);}
+  .schedule-row:hover{transform:translateX(4px); box-shadow:0 8px 18px rgba(181,114,43,0.14);}
+  .topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; position:relative; z-index:2;}
+  .brand{font-size:15px; letter-spacing:0.14em; text-transform:uppercase; color:var(--marigold-light); font-weight:600;}
+  .lock-btn{
+    background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.28);
+    color:#FCEBC9; padding:8px 16px; border-radius:30px; font-size:13px; font-weight:600;
+    cursor:pointer; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:6px;
+  }
+  .lock-btn:hover{background:rgba(255,255,255,0.18);}
+  .lock-btn.unlocked{background:var(--leaf); border-color:var(--leaf);}
+
+  .hero{text-align:center; margin-top:26px;}
+  .hero .om{font-size:38px; color:var(--marigold); margin-bottom:6px;}
+  .hero h1{font-size:clamp(30px,5vw,48px); font-weight:800; line-height:1.1;}
+  .hero p.sub{margin-top:10px; color:var(--marigold-light); font-size:16px;}
+  .hero .dates{margin-top:14px; display:inline-block; background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.25); padding:7px 18px; border-radius:30px; font-size:14px;}
+
+  .editable-title{background:transparent; border:none; color:inherit; font:inherit; text-align:center; width:100%; outline:none; border-bottom:1px dashed transparent;}
+  .unlocked .editable-title{border-bottom:1px dashed rgba(255,255,255,0.5);}
+
+  /* ---------- Stats ---------- */
+  .stats{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+    margin-top:-30px; position:relative; z-index:2;
+  }
+  .stat-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 16px; text-align:center; box-shadow:0 6px 18px rgba(122,31,43,0.08);
+  }
+  .stat-card .label{font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); font-weight:600;}
+  .stat-card .value{font-family:'JetBrains Mono', monospace; font-size:26px; font-weight:600; margin-top:6px;}
+  .stat-card.collected .value{color:var(--leaf);}
+  .stat-card.spent .value{color:var(--rust);}
+  .stat-card.balance .value{color:var(--maroon);}
+
+  /* ---------- Sections ---------- */
+  section{margin-top:56px;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:18px; flex-wrap:wrap; gap:10px;}
+  .section-head .eyebrow{font-size:12px; text-transform:uppercase; letter-spacing:0.12em; color:var(--brass); font-weight:700;}
+  .section-head h2{font-size:26px; font-weight:700; color:var(--maroon-dark); margin-top:2px;}
+  .add-btn{
+    background:var(--leaf); color:#fff; border:none; padding:9px 18px; border-radius:8px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px; cursor:pointer;
+  }
+  .add-btn:hover{filter:brightness(1.08);}
+  .add-btn.rust{background:var(--rust);}
+
+  /* schedule */
+  .schedule-list{display:flex; flex-direction:column; gap:10px;}
+  .schedule-row{
+    display:grid; grid-template-columns:120px 1fr auto; gap:14px; align-items:center;
+    background:var(--card); border:1px solid var(--line); border-left:5px solid var(--marigold);
+    border-radius:10px; padding:14px 16px;
+  }
+  .schedule-row .day{font-weight:700; color:var(--maroon); font-size:14px;}
+  .schedule-row .time{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .schedule-row .event{font-weight:600;}
+  .empty-note{color:var(--ink-soft); font-size:14px; padding:16px; text-align:center; border:1px dashed var(--line); border-radius:10px;}
+
+  /* ledger */
+  .ledger{background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  .ledger-row{
+    display:grid; grid-template-columns:36px 1fr 110px 90px 1fr auto;
+    gap:10px; align-items:center; padding:13px 16px; border-bottom:1px dashed var(--line); font-size:14px;
+  }
+  .ledger-row.exp{grid-template-columns:36px 1fr 110px 110px 1fr auto;}
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row.head{background:var(--marigold-light); font-weight:700; font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--maroon-dark);}
+  .receipt-no{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--brass); font-weight:600;}
+  .amt{font-family:'JetBrains Mono',monospace; font-weight:600;}
+  .amt.plus{color:var(--leaf);}
+  .amt.minus{color:var(--rust);}
+  .tag{display:inline-block; font-size:11px; padding:2px 8px; border-radius:20px; background:var(--leaf-light); color:var(--leaf); font-weight:600;}
+  .tag.exp{background:var(--rust-light); color:var(--rust);}
+  .del-btn{background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:16px; opacity:0.5;}
+  .del-btn:hover{opacity:1; color:var(--rust);}
+
+  /* UPI */
+  .upi-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:28px; display:flex; gap:26px; align-items:center; flex-wrap:wrap;
+  }
+  .upi-card canvas{border-radius:10px; border:6px solid #fff; box-shadow:0 4px 14px rgba(0,0,0,0.10);}
+  .upi-info .name{font-weight:700; font-size:18px;}
+  .upi-info .id{font-family:'JetBrains Mono',monospace; color:var(--brass); margin-top:4px; font-size:14px;}
+  .upi-info p{color:var(--ink-soft); font-size:13px; margin-top:8px; max-width:340px;}
+
+  /* forms / modal */
+  .overlay{
+    position:fixed; inset:0; background:rgba(42,24,16,0.55); display:none;
+    align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--card); border-radius:16px; padding:26px; width:100%; max-width:400px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+  }
+  .modal h3{font-size:19px; margin-bottom:16px; color:var(--maroon-dark);}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.04em;}
+  .field input, .field select{
+    width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:8px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#fff;
+  }
+  .modal-actions{display:flex; gap:10px; margin-top:18px;}
+  .btn{flex:1; padding:10px; border-radius:8px; border:none; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; font-size:14px;}
+  .btn.primary{background:var(--maroon); color:#fff;}
+  .btn.ghost{background:transparent; color:var(--ink-soft); border:1px solid var(--line);}
+
+  footer{text-align:center; margin-top:70px; color:var(--ink-soft); font-size:13px;}
+  @media(max-width:640px){
+    .stats{grid-template-columns:1fr;}
+    .ledger-row, .ledger-row.exp{grid-template-columns:1fr; gap:4px; text-align:left;}
+    .ledger-row.head{display:none;}
+    .schedule-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">🪔 Yuvaka Mandala — Ganeshotsav Committee</div>
+      <button class="lock-btn" id="lockBtn" data-action="toggle-lock">🔒 Committee Login</button>
+      <button class="lock-btn" id="changePwBtn" style="display:none" data-action="open-pw-modal">🔑 Change Password</button>
+    </div>
+    <div class="hero" id="heroBlock" style="position:relative;">
+      <span class="petal" style="left:6%; top:10px; animation-delay:0s;">🌼</span>
+      <span class="petal" style="right:8%; top:0px; animation-delay:1.2s;">🪷</span>
+      <span class="petal" style="left:16%; bottom:0px; animation-delay:2.1s; font-size:16px;">✨</span>
+      <span class="petal" style="right:18%; bottom:10px; animation-delay:0.6s; font-size:16px;">🌼</span>
+      <div class="om">ॐ गं गणपतये नमः</div>
+      <h1><input class="editable-title" id="festivalName" value="Ganesh Chaturthi" disabled></h1>
+      <p class="sub"><input class="editable-title" id="streetName" value="Your Street / Colony Name" disabled></p>
+      <div class="dates">
+        <input class="editable-title mono" id="dateRange" value="Set festival dates" disabled style="width:auto; display:inline-block;">
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat-card collected"><div class="label">Total Collected</div><div class="value" id="totalCollected">₹0</div></div>
+    <div class="stat-card spent"><div class="label">Total Spent</div><div class="value" id="totalSpent">₹0</div></div>
+    <div class="stat-card balance"><div class="label">Balance in Hand</div><div class="value" id="balance">₹0</div></div>
+  </div>
+
+  <div class="garland">
+    <svg width="600" height="30" viewBox="0 0 600 30"><g fill="none" stroke="#B5722B" stroke-width="1.5"><path d="M0 4 Q300 34 600 4"/></g>
+      <g id="beads"></g>
+    </svg>
+  </div>
+
+  <!-- SCHEDULE -->
+  <section class="reveal">
+    <div class="section-head">
+      <div><div class="eyebrow">Pooja &amp; Programs</div><h2>Daily Schedule</h2></div>
+      <button class="add-btn" style="display:none" id="addScheduleBtn" data-action="open-schedule-modal">+ Add Event</button>
+    </div>
+    <div class="schedule-list" id="scheduleList"></div>
+  </section>
+
+  <div class="garland"><svg width="600" height="30" viewBox="0 0 600 30"><path d="M0 4 Q300 34 600 4" fill="none" stroke="#B5722B" stroke-width="1.5"/></svg></div>
+
+  <!-- UPI -->
+  <section class="reveal">
+    <div class="section-head">
+      <div><div class="eyebrow">Contribute Online</div><h2>Scan &amp; Pay (UPI)</h2></div>
+      <button class="add-btn" style="display:none" id="editUpiBtn" data-action="open-upi-modal">✎ Edit UPI Details</button>
+    </div>
+    <div class="upi-card">
+      <canvas id="upiCanvas" width="150" height="150"></canvas>
+      <div class="upi-info">
+        <div class="name" id="upiNameDisplay">UPI ID not set yet</div>
+        <div class="id mono" id="upiIdDisplay">—</div>
+        <p>Scan this code to send your chanda directly. After paying, please tell a committee member your name so it gets logged below with a receipt number.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="garland"><svg width="600" height="30" viewBox="0 0 600 30"><path d="M0 4 Q300 34 600 4" fill="none" stroke="#B5722B" stroke-width="1.5"/></svg></div>
+
+  <!-- COLLECTIONS -->
+  <section class="reveal">
+    <div class="section-head">
+      <div><div class="eyebrow">Transparency Ledger</div><h2>Chanda / Collections</h2></div>
+      <button class="add-btn" style="display:none" id="addCollectionBtn" data-action="open-collection-modal">+ Add Entry</button>
+    </div>
+    <div class="ledger">
+      <div class="ledger-row head"><div>#</div><div>Name</div><div>Receipt</div><div>Mode</div><div>Date</div><div>Amount</div></div>
+      <div id="collectionRows"></div>
+    </div>
+  </section>
+
+  <div class="garland"><svg width="600" height="30" viewBox="0 0 600 30"><path d="M0 4 Q300 34 600 4" fill="none" stroke="#B5722B" stroke-width="1.5"/></svg></div>
+
+  <!-- EXPENDITURE -->
+  <section class="reveal">
+    <div class="section-head">
+      <div><div class="eyebrow">Transparency Ledger</div><h2>Expenditure</h2></div>
+      <button class="add-btn rust" style="display:none" id="addExpenseBtn" data-action="open-expense-modal">+ Add Expense</button>
+    </div>
+    <div class="ledger">
+      <div class="ledger-row exp head"><div>#</div><div>Item</div><div>Category</div><div>Date</div><div>Note</div><div>Amount</div></div>
+      <div id="expenseRows"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div style="font-family:'Baloo 2', sans-serif; font-size:14px; letter-spacing:0.03em; color:var(--brass); font-weight:600;">Designed &amp; Developed by <span style="color:var(--maroon-dark);">Naveen J Kambar</span></div>
+  </footer>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <h3>Committee Login</h3>
+    <div class="field"><label>Password</label><input type="password" id="passwordInput" placeholder="Enter committee password"></div>
+    <p style="font-size:12px;color:var(--ink-soft)" id="loginError"></p>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="close-overlay" data-target="loginOverlay">Cancel</button>
+      <button class="btn primary" data-action="attempt-login">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="overlay" id="scheduleOverlay">
+  <div class="modal">
+    <h3>Add Program</h3>
+    <div class="field"><label>Day / Date</label><input id="schDay" placeholder="e.g. Day 3, 5 Sep"></div>
+    <div class="field"><label>Time</label><input id="schTime" placeholder="e.g. 7:00 AM – 8:00 AM"></div>
+    <div class="field"><label>Event</label><input id="schEvent" placeholder="e.g. Morning Aarti"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="close-overlay" data-target="scheduleOverlay">Cancel</button>
+      <button class="btn primary" data-action="save-schedule">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- COLLECTION MODAL -->
+<div class="overlay" id="collectionOverlay">
+  <div class="modal">
+    <h3>Add Collection Entry</h3>
+    <div class="field"><label>Contributor Name</label><input id="colName" placeholder="e.g. Suresh Kumar"></div>
+    <div class="field"><label>Amount (₹)</label><input id="colAmount" type="number" placeholder="e.g. 500"></div>
+    <div class="field"><label>Receipt No.</label><input id="colReceipt" placeholder="e.g. 001"></div>
+    <div class="field"><label>Payment Mode</label>
+      <select id="colMode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option></select>
+    </div>
+    <div class="field"><label>Date</label><input id="colDate" type="date"></div>
+    <p style="font-size:12px;color:var(--rust)" id="colError"></p>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="close-overlay" data-target="collectionOverlay">Cancel</button>
+      <button class="btn primary" data-action="save-collection">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPENSE MODAL -->
+<div class="overlay" id="expenseOverlay">
+  <div class="modal">
+    <h3>Add Expense</h3>
+    <div class="field"><label>Item</label><input id="expItem" placeholder="e.g. Idol / Pandal decoration"></div>
+    <div class="field"><label>Amount (₹)</label><input id="expAmount" type="number" placeholder="e.g. 3000"></div>
+    <div class="field"><label>Category</label>
+      <select id="expCategory"><option>Idol &amp; Pooja</option><option>Decoration</option><option>Prasad / Food</option><option>Sound &amp; Lighting</option><option>Visarjan</option><option>Miscellaneous</option></select>
+    </div>
+    <div class="field"><label>Date</label><input id="expDate" type="date"></div>
+    <div class="field"><label>Note</label><input id="expNote" placeholder="e.g. Paid to Ram Decorators"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="close-overlay" data-target="expenseOverlay">Cancel</button>
+      <button class="btn primary" data-action="save-expense">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPI MODAL -->
+<div class="overlay" id="upiOverlay">
+  <div class="modal">
+    <h3>Edit UPI Details</h3>
+    <div class="field"><label>Name shown to payers</label><input id="upiNameInput" placeholder="e.g. Ganeshotsav Committee"></div>
+    <div class="field"><label>UPI ID</label><input id="upiIdInput" placeholder="e.g. committee@okicici"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="close-overlay" data-target="upiOverlay">Cancel</button>
+      <button class="btn primary" data-action="save-upi">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="overlay" id="pwOverlay">
+  <div class="modal">
+    <h3>Change Committee Password</h3>
+    <div class="field"><label>Current Password</label><input type="password" id="pwCurrent"></div>
+    <div class="field"><label>New Password</label><input type="password" id="pwNew"></div>
+    <div class="field"><label>Confirm New Password</label><input type="password" id="pwConfirm"></div>
+    <p style="font-size:12px;color:var(--rust)" id="pwError"></p>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="close-overlay" data-target="pwOverlay">Cancel</button>
+      <button class="btn primary" data-action="change-password">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="overlay" id="deleteConfirmOverlay">
+  <div class="modal">
+    <h3>Delete this entry?</h3>
+    <p style="font-size:13.5px;color:var(--ink-soft);margin-bottom:4px;">This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" data-action="cancel-delete">Cancel</button>
+      <button class="btn primary" style="background:var(--rust)" data-action="confirm-delete">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Visible error banner so failures are never silent
+window.addEventListener('error', function(e){
+  let bar = document.getElementById('jsErrBar');
+  if(!bar){
+    bar = document.createElement('div');
+    bar.id = 'jsErrBar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#C1442E;color:#fff;padding:10px 16px;font-family:sans-serif;font-size:13px;z-index:9999;';
+    document.body.prepend(bar);
+  }
+  bar.textContent = 'Something went wrong loading this page: ' + e.message;
+});
+
+function showToast(msg, isError){
+  let t = document.getElementById('toastBar');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'toastBar';
+    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:11px 20px;border-radius:30px;font-family:Inter,sans-serif;font-size:13.5px;font-weight:600;z-index:9999;box-shadow:0 8px 20px rgba(0,0,0,0.2);max-width:88vw;text-align:center;';
+    document.body.appendChild(t);
+  }
+  t.style.background = isError ? '#C1442E' : '#3C6E47';
+  t.style.color = '#fff';
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(()=>{ t.style.display = 'none'; }, isError ? 5000 : 2200);
+}
+
+// Click handling registered first, independent of anything below
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  try{
+    if(action === 'toggle-lock') toggleLock();
+    else if(action === 'open-pw-modal') openPwModal();
+    else if(action === 'close-overlay') closeOverlay(btn.dataset.target);
+    else if(action === 'attempt-login') attemptLogin();
+    else if(action === 'open-schedule-modal') openScheduleModal();
+    else if(action === 'save-schedule') saveSchedule();
+    else if(action === 'open-collection-modal') openCollectionModal();
+    else if(action === 'save-collection') saveCollection();
+    else if(action === 'open-expense-modal') openExpenseModal();
+    else if(action === 'save-expense') saveExpense();
+    else if(action === 'open-upi-modal') openUpiModal();
+    else if(action === 'save-upi') saveUpi();
+    else if(action === 'change-password') changePassword();
+    else if(action === 'delete-item') deleteItem(btn.dataset.type, btn.dataset.id);
+    else if(action === 'confirm-delete') confirmDelete();
+    else if(action === 'cancel-delete') cancelDelete();
+  }catch(err){ console.error(err); }
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  const openModal = document.querySelector('.overlay.show');
+  if(!openModal || e.target.tagName === 'SELECT') return;
+  const primaryBtn = openModal.querySelector('.btn.primary');
+  if(primaryBtn) primaryBtn.click();
+});
+
+let unlocked = false;
+let sessionPassword = null; // kept in memory only, sent with each write request
+let state = {
+  settings: {festivalName:"Ganesh Chaturthi", streetName:"Your Street / Colony Name", dateRange:"Set festival dates", upiName:"", upiId:""},
+  schedule: [],
+  collections: [],
+  expenditures: []
+};
+
+function fmt(n){
+  const num = Number(n||0);
+  return (num < 0 ? "-₹" : "₹") + Math.abs(num).toLocaleString('en-IN');
+}
+
+async function apiCall(url, options){
+  const res = await fetch(url, options);
+  let data = null;
+  try{ data = await res.json(); }catch(e){}
+  if(!res.ok){
+    const msg = (data && data.error) ? data.error : `Request failed (${res.status})`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+async function loadAll(){
+  try{
+    const data = await apiCall('/api/data');
+    state = data;
+  }catch(e){
+    console.error(e);
+    showToast("Couldn't load data from the server — please refresh the page.", true);
+  }
+  render();
+}
+
+function render(){
+  document.getElementById('festivalName').value = state.settings.festivalName;
+  document.getElementById('streetName').value = state.settings.streetName;
+  document.getElementById('dateRange').value = state.settings.dateRange;
+
+  const totalCollected = state.collections.reduce((a,c)=>a+Number(c.amount||0),0);
+  const totalSpent = state.expenditures.reduce((a,c)=>a+Number(c.amount||0),0);
+  document.getElementById('totalCollected').textContent = fmt(totalCollected);
+  document.getElementById('totalSpent').textContent = fmt(totalSpent);
+  const balanceVal = totalCollected-totalSpent;
+  const balEl = document.getElementById('balance');
+  balEl.textContent = fmt(balanceVal);
+  balEl.style.color = balanceVal < 0 ? 'var(--rust)' : 'var(--maroon)';
+
+  // schedule
+  const schEl = document.getElementById('scheduleList');
+  if(state.schedule.length === 0){
+    schEl.innerHTML = '<div class="empty-note">No programs added yet.</div>';
+  } else {
+    schEl.innerHTML = state.schedule.map(ev => `
+      <div class="schedule-row">
+        <div><div class="day">${escapeHtml(ev.day)}</div><div class="time">${escapeHtml(ev.time)}</div></div>
+        <div class="event">${escapeHtml(ev.event)}</div>
+        ${unlocked ? `<button class="del-btn" data-action="delete-item" data-type="schedule" data-id="${ev.id}">✕</button>` : '<div></div>'}
+      </div>`).join('');
+  }
+
+  // collections
+  const colEl = document.getElementById('collectionRows');
+  if(state.collections.length === 0){
+    colEl.innerHTML = '<div class="empty-note" style="margin:14px;">No contributions logged yet.</div>';
+  } else {
+    colEl.innerHTML = state.collections.map((c,i) => `
+      <div class="ledger-row">
+        <div class="mono">${i+1}</div>
+        <div>${escapeHtml(c.name)}</div>
+        <div class="receipt-no">#${escapeHtml(c.receipt||'—')}</div>
+        <div><span class="tag">${escapeHtml(c.mode||'Cash')}</span></div>
+        <div class="mono" style="font-size:12px;color:var(--ink-soft)">${escapeHtml(c.date||'')}</div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+          <span class="amt plus">+${fmt(c.amount)}</span>
+          ${unlocked ? `<button class="del-btn" data-action="delete-item" data-type="collections" data-id="${c.id}">✕</button>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  // expenditure
+  const expEl = document.getElementById('expenseRows');
+  if(state.expenditures.length === 0){
+    expEl.innerHTML = '<div class="empty-note" style="margin:14px;">No expenses logged yet.</div>';
+  } else {
+    expEl.innerHTML = state.expenditures.map((e,i) => `
+      <div class="ledger-row exp">
+        <div class="mono">${i+1}</div>
+        <div>${escapeHtml(e.item)}</div>
+        <div><span class="tag exp">${escapeHtml(e.category)}</span></div>
+        <div class="mono" style="font-size:12px;color:var(--ink-soft)">${escapeHtml(e.date||'')}</div>
+        <div style="font-size:13px;color:var(--ink-soft)">${escapeHtml(e.note||'')}</div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+          <span class="amt minus">−${fmt(e.amount)}</span>
+          ${unlocked ? `<button class="del-btn" data-action="delete-item" data-type="expenditures" data-id="${e.id}">✕</button>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  document.getElementById('upiNameDisplay').textContent = state.settings.upiName || "UPI ID not set yet";
+  document.getElementById('upiIdDisplay').textContent = state.settings.upiId || "—";
+  renderQr();
+
+  ['addScheduleBtn','addCollectionBtn','addExpenseBtn','editUpiBtn'].forEach(id=>{
+    document.getElementById(id).style.display = unlocked ? 'inline-block' : 'none';
+  });
+  document.querySelectorAll('.editable-title').forEach(el=>el.disabled = !unlocked);
+  document.getElementById('heroBlock').classList.toggle('unlocked', unlocked);
+}
+
+function escapeHtml(str){
+  return String(str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function renderQr(){
+  const canvas = document.getElementById('upiCanvas');
+  if(!state.settings.upiId){
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,150,150);
+    ctx.fillStyle = '#F4C878'; ctx.fillRect(0,0,150,150);
+    ctx.fillStyle = '#7A1F2B'; ctx.font='13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Set UPI ID', 75, 70);
+    ctx.fillText('to show QR', 75, 88);
+    return;
+  }
+  const upiString = `upi://pay?pa=${encodeURIComponent(state.settings.upiId)}&pn=${encodeURIComponent(state.settings.upiName||'Ganeshotsav Committee')}&cu=INR`;
+  try{
+    new QRious({ element: canvas, value: upiString, size: 150, background:'#fff', foreground:'#2A1810' });
+  }catch(e){ console.error('QR error', e); }
+}
+
+// ---- lock/unlock ----
+function toggleLock(){
+  if(unlocked){
+    unlocked = false;
+    sessionPassword = null;
+    document.getElementById('lockBtn').textContent = '🔒 Committee Login';
+    document.getElementById('lockBtn').classList.remove('unlocked');
+    document.getElementById('changePwBtn').style.display = 'none';
+    render();
+  } else {
+    document.getElementById('passwordInput').value='';
+    document.getElementById('loginError').textContent='';
+    document.getElementById('loginOverlay').classList.add('show');
+  }
+}
+async function attemptLogin(){
+  const val = document.getElementById('passwordInput').value;
+  try{
+    const data = await apiCall('/api/login', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password: val})
+    });
+    if(data.ok){
+      unlocked = true;
+      sessionPassword = val;
+      document.getElementById('lockBtn').textContent = '🔓 Committee Mode';
+      document.getElementById('lockBtn').classList.add('unlocked');
+      document.getElementById('changePwBtn').style.display = 'inline-block';
+      closeOverlay('loginOverlay');
+      render();
+    } else {
+      document.getElementById('loginError').textContent = 'Incorrect password.';
+    }
+  }catch(e){
+    document.getElementById('loginError').textContent = "Couldn't reach the server. Try again.";
+  }
+}
+function closeOverlay(id){ document.getElementById(id).classList.remove('show'); }
+
+// editable title / UPI fields -> save on blur
+['festivalName','streetName','dateRange'].forEach(id=>{
+  document.getElementById(id).addEventListener('blur', async (e)=>{
+    if(!unlocked) return;
+    state.settings[id] = e.target.value;
+    try{
+      await apiCall('/api/settings', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({password: sessionPassword, [id]: e.target.value})
+      });
+    }catch(err){ showToast("Couldn't save — " + err.message, true); }
+  });
+});
+
+// ---- schedule ----
+function openScheduleModal(){
+  document.getElementById('schDay').value='';
+  document.getElementById('schTime').value='';
+  document.getElementById('schEvent').value='';
+  document.getElementById('scheduleOverlay').classList.add('show');
+}
+async function saveSchedule(){
+  const day = document.getElementById('schDay').value.trim();
+  const time = document.getElementById('schTime').value.trim();
+  const event = document.getElementById('schEvent').value.trim();
+  if(!day || !event) return;
+  try{
+    const item = await apiCall('/api/schedule', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({day, time, event, password: sessionPassword})
+    });
+    state.schedule.push(item);
+    showToast('Event saved ✓');
+    closeOverlay('scheduleOverlay');
+    render();
+  }catch(e){ showToast("Couldn't save — " + e.message, true); }
+}
+
+// ---- collections ----
+function suggestNextReceipt(){
+  const nums = state.collections.map(c => parseInt(c.receipt, 10)).filter(n => !isNaN(n));
+  if(nums.length === 0) return '';
+  return String(Math.max(...nums) + 1).padStart(3, '0');
+}
+function openCollectionModal(){
+  document.getElementById('colName').value='';
+  document.getElementById('colAmount').value='';
+  document.getElementById('colReceipt').value = suggestNextReceipt();
+  document.getElementById('colMode').value='Cash';
+  document.getElementById('colDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('colError').textContent = '';
+  document.getElementById('collectionOverlay').classList.add('show');
+}
+async function saveCollection(){
+  const name = document.getElementById('colName').value.trim();
+  const amount = document.getElementById('colAmount').value;
+  const receipt = document.getElementById('colReceipt').value.trim();
+  const mode = document.getElementById('colMode').value;
+  const date = document.getElementById('colDate').value;
+  const err = document.getElementById('colError');
+  err.textContent = '';
+  if(!name || !amount) return;
+  if(!receipt){ err.textContent = 'Receipt No. is required and must be unique.'; return; }
+  try{
+    const item = await apiCall('/api/collections', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({name, amount, receipt, mode, date, password: sessionPassword})
+    });
+    state.collections.push(item);
+    showToast('Collection entry saved ✓');
+    closeOverlay('collectionOverlay');
+    render();
+  }catch(e){ err.textContent = e.message; }
+}
+
+// ---- expenditure ----
+function openExpenseModal(){
+  document.getElementById('expItem').value='';
+  document.getElementById('expAmount').value='';
+  document.getElementById('expCategory').value='Idol & Pooja';
+  document.getElementById('expDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('expNote').value='';
+  document.getElementById('expenseOverlay').classList.add('show');
+}
+async function saveExpense(){
+  const item = document.getElementById('expItem').value.trim();
+  const amount = document.getElementById('expAmount').value;
+  const category = document.getElementById('expCategory').value;
+  const date = document.getElementById('expDate').value;
+  const note = document.getElementById('expNote').value.trim();
+  if(!item || !amount) return;
+  try{
+    const newItem = await apiCall('/api/expenditures', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({item, amount, category, date, note, password: sessionPassword})
+    });
+    state.expenditures.push(newItem);
+    showToast('Expense saved ✓');
+    closeOverlay('expenseOverlay');
+    render();
+  }catch(e){ showToast("Couldn't save — " + e.message, true); }
+}
+
+// ---- upi ----
+function openUpiModal(){
+  document.getElementById('upiNameInput').value = state.settings.upiName;
+  document.getElementById('upiIdInput').value = state.settings.upiId;
+  document.getElementById('upiOverlay').classList.add('show');
+}
+async function saveUpi(){
+  const upiName = document.getElementById('upiNameInput').value.trim();
+  const upiId = document.getElementById('upiIdInput').value.trim();
+  try{
+    await apiCall('/api/settings', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({upiName, upiId, password: sessionPassword})
+    });
+    state.settings.upiName = upiName;
+    state.settings.upiId = upiId;
+    closeOverlay('upiOverlay');
+    render();
+    showToast('UPI details saved ✓');
+  }catch(e){ showToast("Couldn't save — " + e.message, true); }
+}
+
+// ---- password ----
+function openPwModal(){
+  document.getElementById('pwCurrent').value='';
+  document.getElementById('pwNew').value='';
+  document.getElementById('pwConfirm').value='';
+  document.getElementById('pwError').textContent='';
+  document.getElementById('pwOverlay').classList.add('show');
+}
+async function changePassword(){
+  const cur = document.getElementById('pwCurrent').value;
+  const next = document.getElementById('pwNew').value;
+  const confirmVal = document.getElementById('pwConfirm').value;
+  const err = document.getElementById('pwError');
+  if(next !== confirmVal){ err.textContent = 'New passwords do not match.'; return; }
+  try{
+    await apiCall('/api/change-password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({current: cur, new: next})
+    });
+    sessionPassword = next;
+    closeOverlay('pwOverlay');
+    showToast('Password updated — share the new password with your committee.');
+  }catch(e){ err.textContent = e.message; }
+}
+
+// ---- delete ----
+let pendingDelete = null;
+function deleteItem(type, id){
+  if(!unlocked) return;
+  pendingDelete = {type, id};
+  document.getElementById('deleteConfirmOverlay').classList.add('show');
+}
+async function confirmDelete(){
+  if(!pendingDelete) return;
+  const {type, id} = pendingDelete;
+  pendingDelete = null;
+  closeOverlay('deleteConfirmOverlay');
+  try{
+    await apiCall(`/api/${type}/${id}`, {
+      method:'DELETE', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password: sessionPassword})
+    });
+    state[type] = state[type].filter(x => x.id !== id);
+    render();
+    showToast('Entry deleted ✓');
+  }catch(e){ showToast("Couldn't delete — " + e.message, true); }
+}
+function cancelDelete(){
+  pendingDelete = null;
+  closeOverlay('deleteConfirmOverlay');
+}
+
+loadAll();
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, {threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
