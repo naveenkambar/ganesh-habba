@@ -486,7 +486,7 @@ function fmt(n){
 }
 
 async function apiCall(url, options){
-  const res = await fetch(url, options);
+  const res = await fetch('https://ganesh-habba-1.onrender.com' + url, options);
   let data = null;
   try{ data = await res.json(); }catch(e){}
   if(!res.ok){
